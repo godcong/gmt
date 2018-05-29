@@ -4,7 +4,8 @@ import (
 	"sync"
 	"context"
 	"time"
-	"github.com/ethereum/go-ethereum/log"
+
+	"github.com/godcong/wego/log"
 )
 
 type ThreadMain struct {
