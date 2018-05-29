@@ -4,6 +4,7 @@ import (
 	"sync"
 	"context"
 	"time"
+	"runtime"
 )
 
 type ThreadMain struct {
@@ -118,6 +119,9 @@ func (obj *ThreadMain) threadRun(ctx context.Context, able ThreadAble) {
 }
 
 func (obj *ThreadMain) Start() {
+	// config cpu number
+	runtime.GOMAXPROCS(runtime.NumCPU())
+
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	obj.threads.Range(
