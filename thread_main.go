@@ -35,26 +35,26 @@ type delayedTransmission struct {
 	Val    interface{}
 }
 
-var defaultThread = ThreadMain{}
+var DefaultThread = ThreadMain{}
 
 func NewThreadMain() *ThreadMain {
 	return &ThreadMain{}
 }
 
 func Register(t ThreadAble) () {
-	defaultThread.Register(t)
+	DefaultThread.Register(t)
 }
 
 func RegisterThread(t Thread) () {
-	defaultThread.RegisterThread(t)
+	DefaultThread.RegisterThread(t)
 }
 
 func SendTo(self NameAble, name string, val interface{}) {
-	defaultThread.SendTo(self, name, val)
+	DefaultThread.SendTo(self, name, val)
 }
 
 func DelayedSendTo(self NameAble, name string, val interface{}){
-	defaultThread.DelayedSendTo(self,name,val)
+	DefaultThread.DelayedSendTo(self,name,val)
 }
 
 //func Find(name string) (t ThreadAble) {
@@ -62,11 +62,11 @@ func DelayedSendTo(self NameAble, name string, val interface{}){
 //}
 
 func Start() {
-	go defaultThread.Start()
+	go DefaultThread.Start()
 }
 
 func Stop() {
-	defaultThread.Stop()
+	DefaultThread.Stop()
 }
 
 func (obj *ThreadMain) Register(t ThreadAble) {
