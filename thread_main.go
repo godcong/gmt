@@ -35,7 +35,7 @@ type delayedTransmission struct {
 	Val    interface{}
 }
 
-var DefaultThread = ThreadMain{}
+var DefaultThread = &ThreadMain{}
 
 func NewThreadMain() *ThreadMain {
 	return &ThreadMain{}
