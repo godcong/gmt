@@ -4,13 +4,13 @@ import (
 	"sync"
 	"context"
 	"time"
-
 )
 
 type ThreadMain struct {
-	stop      bool
-	threads   sync.Map
-	transport sync.Pool
+	DelayedSeconds int
+	stop           bool
+	threads        sync.Map
+	transport      sync.Pool
 }
 
 type NameAble interface {
@@ -31,14 +31,16 @@ type Thread interface {
 
 type delayedTransmission struct {
 	Name NameAble
-	To     string
-	Val    interface{}
+	To   string
+	Val  interface{}
 }
 
-var DefaultThread = &ThreadMain{}
+var DefaultThread = NewThreadMain()
 
 func NewThreadMain() *ThreadMain {
-	return &ThreadMain{}
+	return &ThreadMain{
+		DelayedSeconds: 5,
+	}
 }
 
 func Register(t ThreadAble) () {
@@ -53,8 +55,8 @@ func SendTo(self NameAble, name string, val interface{}) {
 	DefaultThread.SendTo(self, name, val)
 }
 
-func DelayedSendTo(self NameAble, name string, val interface{}){
-	DefaultThread.DelayedSendTo(self,name,val)
+func DelayedSendTo(self NameAble, name string, val interface{}) {
+	DefaultThread.DelayedSendTo(self, name, val)
 }
 
 //func Find(name string) (t ThreadAble) {
@@ -76,8 +78,8 @@ func (obj *ThreadMain) Register(t ThreadAble) {
 func (obj *ThreadMain) DelayedSendTo(self NameAble, name string, val interface{}) {
 	obj.transport.Put(&delayedTransmission{
 		Name: self,
-		To:     name,
-		Val:    val,
+		To:   name,
+		Val:  val,
 	})
 }
 
@@ -140,7 +142,7 @@ func (obj *ThreadMain) Start() {
 		for delayedSend(obj) {
 
 		}
-		time.Sleep(time.Second)
+		time.Sleep(time.Second * time.Duration(obj.DelayedSeconds))
 
 	}
 
