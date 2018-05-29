@@ -5,7 +5,6 @@ import (
 	"context"
 	"time"
 
-	"github.com/godcong/wego/log"
 )
 
 type ThreadMain struct {
@@ -131,7 +130,7 @@ func (obj *ThreadMain) Start() {
 				go v.RunServer(ctx)
 				return true
 			}
-			log.Error("not succeeded with ", key)
+			//fmt.Println("not succeeded with ", key)
 			return false
 		})
 	for {
