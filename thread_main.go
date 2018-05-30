@@ -18,15 +18,23 @@ type NameAble interface {
 	Name() string
 }
 
-type ThreadAble interface {
+type RunAble interface {
 	Run(obj *ThreadMain) error
-	Name() string
+}
+
+type ProcessAble interface {
 	ReceiveFrom(name string, val interface{}) error
 }
 
+type ThreadAble interface {
+	NameAble
+	RunAble
+	ProcessAble
+}
+
 type Thread interface {
-	RunServer(ctx context.Context)
-	Name() string
+	NameAble
+	ThreadRun(ctx context.Context)
 	Stop()
 }
 
@@ -72,8 +80,20 @@ func Stop() {
 	DefaultThread.Stop()
 }
 
-func (obj *ThreadMain) Register(t ThreadAble) {
-	obj.threads.Store(t.Name(), t)
+func (obj *ThreadMain) Register(inter interface{}) {
+	if nm, b := inter.(NameAble); b {
+		obj.threads.Store(nm.Name(), inter)
+		return
+	}
+	obj.threads.Store(GenerateRandomString(16), inter)
+}
+
+func (obj *ThreadMain) RegisterRun(t ThreadAble) {
+	obj.Register(t)
+}
+
+func (obj *ThreadMain) RegisterThread(t Thread) {
+	obj.Register(t)
 }
 
 func (obj *ThreadMain) DelayedSendTo(self NameAble, name string, val interface{}) {
@@ -133,7 +153,7 @@ func (obj *ThreadMain) Start() {
 			}
 			//run thread
 			if v, b := value.(Thread); b {
-				go v.RunServer(ctx)
+				go v.ThreadRun(ctx)
 				return true
 			}
 			//fmt.Println("not succeeded with ", key)
@@ -173,8 +193,4 @@ func delayedSend(obj *ThreadMain) bool {
 
 func (obj *ThreadMain) Stop() {
 	obj.stop = true
-}
-
-func (obj *ThreadMain) RegisterThread(thread Thread) {
-	obj.threads.Store(thread.Name(), thread)
 }
